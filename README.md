@@ -18,21 +18,21 @@ DotNetBuild takes care of generating the right artifacts, so you can concentrate
 
 Compared to VS, DotNetBuild uses a JSON-like format to configure your build:
 
-# `global.bsd`  - Only one per repo. Applies to all projects.
-# `project.bsd` - One per project. You can append or override global settings in here.
+* `global.bsd`  - Only one per repo. Applies to all projects.
+* `project.bsd` - One per project. You can append or override global settings in here.
 
 
 Configure Your Build
 ====================
 The command `build configure` creates a working directory and do most of its stuff in there:
 
-# Copies out your source code to the working directory
-# Download the .NET SDK if needed and sets up the `dotnet` cli environment
-# Creates global level artifacts such as solution file, nuget configuration, global.json, etc.
-# Generates project makefiles for MSBuild such as `csproj`
-# Generates `AssemblyInfo` metadata code (which you configure in `global.bsd` and `project.bsd`)
-# Creates localization resources automatically from a special `Properties/StringData.txt` file in your project.
-# Process text templates in your codes using PowerShell syntax.
+* Copies out your source code to the working directory
+* Download the .NET SDK if needed and sets up the `dotnet` cli environment
+* Creates global level artifacts such as solution file, nuget configuration, global.json, etc.
+* Generates project makefiles for MSBuild such as `csproj`
+* Generates `AssemblyInfo` metadata code (which you configure in `global.bsd` and `project.bsd`)
+* Creates localization resources automatically from a special `Properties/StringData.txt` file in your project.
+* Process text templates in your codes using PowerShell syntax.
 
 The working directory is compatible with Visual Studio for the most part. You can open up your solution file using VS, try out code changes, debug, build and perform unit tests. When you are 
 done, remember to copy your new code back to the source folder.
