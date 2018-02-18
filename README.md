@@ -2,29 +2,29 @@ Build Tools for .NET
 ====================
 DotNetBuild is a build tool designed to simplify how we work with .NET family projects.
 
-```powershell
-C:\repo\> .\build configure
-C:\repo\> .\build debug *
-C:\repo\> .\build clean debug *
-C:\repo\> .\build release *
-C:\repo\> .\build publish .\releases\my.very.cool.lib.1.0.0.nupkg
+```batchfile
+C:\repo\> build configure
+C:\repo\> build debug *
+C:\repo\> build clean debug *
+C:\repo\> build release *
+C:\repo\> build publish .\releases\my.very.cool.lib.1.0.0.nupkg
 ```
 
 
 Why not Visual Studio
 =====================
-We do! DotNetBuild is not meant to replace your favorite IDE with console and notepad. Instead, it works as a human friendly layer on top of the XML based makefile that MSBuild uses. 
+Why not indeed! DotNetBuild is not meant to replace your favorite IDE with console and notepad. Instead, it works as a human friendly layer on top of the XML based makefile that MSBuild uses. 
 DotNetBuild takes care of generating the right artifacts, so you can concentrate on the codes that matter.
 
 Compared to VS, DotNetBuild uses a JSON-like format to configure your build:
 
-* `global.bsd`  - Only one per repo. Applies to all projects.
-* `project.bsd` - One per project. You can append or override global settings in here.
+* `global.bsd`  - Only one per repo. Applies to all projects. It looks [like this](./src/global.bsd).
+* `project.bsd` - One per project. You can append or override global settings in here. Here is [a sample](./src/MyFoo.CSharpLib/project.bsd).
 
 
 Configure Your Build
 ====================
-The command `build configure` creates a working directory and do most of its stuff in there:
+The command `build configure` creates a working directory and do the following things:
 
 * Copies out your source code to the working directory
 * Download the .NET SDK if needed and sets up the `dotnet` cli environment
@@ -58,7 +58,7 @@ Publishing
 ==========
 Share your package with the world or your private NuGet server: 
 
-```powershell
+```batchfile
 C:\> build publish .\releases\mylibrary.1.0.0.nupkg
 ```
 
