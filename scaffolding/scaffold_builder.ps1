@@ -12,14 +12,16 @@ if (Test-Path $payloadDir)
 }
 
 md $payloadDir
+
 copy $repoDir\build.cmd $payloadDir
 copy $repoDir\icon.png $payloadDir
-copy $repoDir\README.md $payloadDir
-copy $repoDir\LICENSE $payloadDir
-copy $repoDir\THIRD-PARTY-LICENSE.txt $payloadDir
 copy $repoDir\.gitignore $payloadDir
 copy $repoDir\tools $payloadDir -Recurse
 copy $repoDir\src $payloadDir -Recurse
+
+copy $PSScriptRoot\README.md $payloadDir
+copy $PSScriptRoot\LICENSE $payloadDir
+copy $PSScriptRoot\THIRD-PARTY-LICENSE.txt $payloadDir
 
 copy $scaffoldGlobalBsd "$payloadDir\src\global.bsd" -Force
 copy $scaffoldCsprojectBsd "$payloadDir\src\MyFoo.CSharpLib\project.bsd" -Force
@@ -30,4 +32,4 @@ Compress-Archive -Path "$payloadDir\*" -DestinationPath $payloadZip
 $payloadBin = Get-Content $payloadZip -Encoding Byte
 $payloadBase64 = [System.Convert]::ToBase64String($payloadBin)
 $scaffold = (Get-Content -Path $scaffoldTemplate -Encoding UTF8) -join [Environment]::NewLine
-$scaffold.Replace('{{ $payload }}', $payloadBase64) | Set-Content -Path $scaffoldOutput -Encoding UTF8
+$scaffold.Replace('{{ $payload }}', $payloadBase64) | Set-Content -Path $scaffoldOutput -Encoding Ascii
