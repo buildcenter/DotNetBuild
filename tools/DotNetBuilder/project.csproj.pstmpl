@@ -251,12 +251,12 @@
     </Content>
 {{ } }}
   </ItemGroup>
-  <Target Name="CopyStaticFiles" AfterTargets="Build">
+  <Target Name="CopyStaticFiles" AfterTargets="Build" Condition="'$(TargetDir)'!=''">
     <ItemGroup>
       <StaticOutputFiles0 Include="Static/**" Exclude="" />
     </ItemGroup>
     <Message Text="Copying static resource files to output directory..." Importance="High" />
-    <Copy SourceFiles="@(StaticOutputFiles0)" DestinationFolder="$(TargetDir)\%(RecursiveDir)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(StaticOutputFiles0)" DestinationFolder="$(TargetDir)%(RecursiveDir)" SkipUnchangedFiles="true" />
   </Target>
 
   <!-- begin frameworks -->
