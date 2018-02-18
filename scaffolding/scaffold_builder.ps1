@@ -32,4 +32,4 @@ Compress-Archive -Path "$payloadDir\*" -DestinationPath $payloadZip
 $payloadBin = Get-Content $payloadZip -Encoding Byte
 $payloadBase64 = [System.Convert]::ToBase64String($payloadBin)
 $scaffold = (Get-Content -Path $scaffoldTemplate -Encoding UTF8) -join [Environment]::NewLine
-$scaffold.Replace('{{ $payload }}', $payloadBase64) | Set-Content -Path $scaffoldOutput -Encoding UTF8
+$scaffold.Replace('{{ $payload }}', $payloadBase64) | Set-Content -Path $scaffoldOutput -Encoding Ascii
