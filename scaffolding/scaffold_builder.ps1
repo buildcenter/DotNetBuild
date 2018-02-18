@@ -12,14 +12,16 @@ if (Test-Path $payloadDir)
 }
 
 md $payloadDir
+
 copy $repoDir\build.cmd $payloadDir
 copy $repoDir\icon.png $payloadDir
-copy $repoDir\README.md $payloadDir
-copy $repoDir\LICENSE $payloadDir
-copy $repoDir\THIRD-PARTY-LICENSE.txt $payloadDir
 copy $repoDir\.gitignore $payloadDir
 copy $repoDir\tools $payloadDir -Recurse
 copy $repoDir\src $payloadDir -Recurse
+
+copy $PSScriptRoot\README.md $payloadDir
+copy $PSScriptRoot\LICENSE $payloadDir
+copy $PSScriptRoot\THIRD-PARTY-LICENSE.txt $payloadDir
 
 copy $scaffoldGlobalBsd "$payloadDir\src\global.bsd" -Force
 copy $scaffoldCsprojectBsd "$payloadDir\src\MyFoo.CSharpLib\project.bsd" -Force

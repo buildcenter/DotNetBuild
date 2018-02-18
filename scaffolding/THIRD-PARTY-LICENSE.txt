@@ -1,0 +1,6 @@
+﻿THIRD PARTY LICENSES
+====================
+Third-party libraries or other resources may be distributed under licenses different than the one for this repository.
+
+The attached notices are provided for information only.
+
