@@ -4,7 +4,7 @@ DotNetBuild is a build tool designed to simplify how we work with .NET family pr
 
 ```batchfile
 C:\> md repo && cd repo
-C:\repo\> powershell -Command "& { wget https://raw.githubusercontent.com/buildcenter/DotNetBuild/master/scaffold.ps1 | iex }"
+C:\repo\> powershell -Command "& { wget https://raw.githubusercontent.com/buildcenter/DotNetBuild/master/scaffold.ps1 -UseBasicParsing | iex }"
 C:\repo\> build configure
 C:\repo\> build debug *
 C:\repo\> build clean debug *
