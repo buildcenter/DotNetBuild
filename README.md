@@ -3,12 +3,17 @@ Build Tools for .NET
 DotNetBuild is a build tool designed to simplify how we work with .NET family projects.
 
 ```batchfile
+C:\> md repo && cd repo
+C:\repo\> powershell -Command "& { wget https://raw.githubusercontent.com/buildcenter/DotNetBuild/master/scaffold.ps1 | iex }"
 C:\repo\> build configure
 C:\repo\> build debug *
 C:\repo\> build clean debug *
 C:\repo\> build release *
+C:\repo\> echo my-secret-apikey > .\credentials\nuget.org.repokey
 C:\repo\> build publish .\releases\my.very.cool.lib.1.0.0.nupkg
 ```
+
+Congrats! You have just built your assembly and published it as a package on NuGet.org. Say what?
 
 
 Why not Visual Studio
@@ -63,6 +68,15 @@ C:\> build publish .\releases\mylibrary.1.0.0.nupkg
 ```
 
 Again, you will specify NuGet servers via `global.bsd` or `project.bsd` configuration. DotNetBuild will automatically push to all servers in your configuration.
+
+
+Schema
+======
+The sample source in [/src/global.bsd](./src/global.bsd) and [/src/MyFoo.CSharpLib/project.bsd](./src/MyFoo.CSharpLib/project.bsd) are rich commented. You should be able figure everything out just by looking at the comments.
+
+Specific schematics are documented [in the docs](http://buildcenter.github.io/DotNetBuild/schema.md).
+
+Since everything is script and template driven, you should just [look at the source](./tools/DotNetBuilder) whenever in doubt.
 
 
 Contributing
