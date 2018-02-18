@@ -1,0 +1,1 @@
+I will be copied to (output)/Nested/bar.txt

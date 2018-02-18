@@ -1,0 +1,21 @@
+using System;
+using MyFoo.CSharpLib;
+
+namespace MyFoo
+{
+    /// <summary>
+    /// Sample class
+    /// </summary>
+    public static class SampleRes
+    {
+{{ @(1..3) | % { }}
+        /// <summary>
+        /// This method always return a localization text string.
+        /// </summary>
+        public static string GetResText{{ $_ }}()
+        {
+            return RS.ResText{{ $_ }};
+        }
+{{ } }}
+    }
+}
