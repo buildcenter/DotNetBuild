@@ -163,6 +163,7 @@
 
   <!-- compiler options -->
   <PropertyGroup>
+    <LangVersion>{{ $compiler.cslang | replace -null '6' | xmltext }}</LangVersion>
     <OutputType>{{ $compiler.outputType | replace -null 'Library' | xmltext }}</OutputType>
     {{ if ($compiler.noWarn) { }}<NoWarn>$(NoWarn);{{ ($compiler.noWarn -join ';') | xmltext }}</NoWarn>{{ } }}
     {{ if ($compiler.constants) { }}<DefineConstants>$(DefineConstants);{{ ($compiler.constants -join ';') | xmltext }}</DefineConstants>{{ } }}
@@ -353,6 +354,13 @@
     {{- } }}
   </PropertyGroup>
 {{   } }}
+
+{{- if ($_.disableDefaultDependencyPackages) { }}
+  <!-- Default package dependencies for this framework will not be added -->
+  <PropertyGroup Condition="'$(TargetFramework)'=='{{ $currentFrameworkName | xmlattrib }}'">
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+  </PropertyGroup>
+{{- } -}}
 
   <!-- project dependencies for {{ $currentFrameworkName }} -->
   <ItemGroup Condition="'$(TargetFramework)'=='{{ $currentFrameworkName | xmlattrib }}'">
