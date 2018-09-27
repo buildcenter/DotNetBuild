@@ -1,4 +1,4 @@
-# Localized	7/2/2018 7:08 PM (GMT)	303:4.80.0411	Message.psd1
+# Localized	9/27/2018 9:40 PM (GMT)	303:4.80.0411	Message.psd1
 # DotNetBuilder BMLocalizedData.en-US
 
 ConvertFrom-StringData @'
@@ -9,7 +9,7 @@ LocaleName = en-US
 AuthorLabel = Created by
 VersionLabel = Version
 Author = Build Team @Lizoc
-Version = 3.1.1024.0
+Version = 3.7.2048.0
 Syntax = SYNTAX
 Example = EXAMPLE
 Description = DESCRIPTION
