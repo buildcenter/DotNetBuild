@@ -17,7 +17,7 @@ namespace MyFoo.Tests
 		[Fact]
         public void GetRes2TextWorks() 
         {
-	    	Assert.Equal("Hello world 2!", SampleRes.GetResText2());
+	    	Assert.Equal("Hello world 2!\nA second line too!", SampleRes.GetResText2());
 	    }
 
 		[Fact]

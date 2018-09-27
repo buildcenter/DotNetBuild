@@ -1,4 +1,4 @@
 ResText1 = Hello world!
-ResText2 = Hello world 2!
+ResText2 = Hello world 2!`nA second line too!
 ResText3 = Hello world 3!
 

@@ -14,6 +14,11 @@ dotnetRuntimeUrl = 'https://download.microsoft.com/download/1/1/0/11046135-4207-
 #dotnetSdkUrl = 'https://download.microsoft.com/download/1/1/5/115B762D-2B41-4AF3-9A63-92D9680B9409/dotnet-sdk-2.1.4-linux-x64.tar.gz'
 #dotnetRuntimeUrl = 'https://download.microsoft.com/download/1/1/0/11046135-4207-40D3-A795-13ECEA741B32/dotnet-runtime-2.0.5-linux-x64.tar.gz'
 
+# enable this if you have a custom location for the dotnet sdk
+# the default behavior is to download the sdk into the repo working directory, which will consume 
+# a lot of disk space if you have multiple repos.
+dotnetSdkDir = ${rootDir}'packages/dotnetsdk'
+
 # ------------------
 # Git and CI
 # ------------------
@@ -117,13 +122,13 @@ package {
 #templateHelperScriptFile = ${toolsDir}'/template_helpers.ps1'
 templates {
     'nuget.config' {
-        path = ${toolsDir}'/DotNetBuilder/nuget.config.pstmpl'
+        path = ${toolsDir}'/DotNetBuilder/nuget.config.tmpl1'
         outputPath = 'nuget.config'
         outputBasePath = 'workingSourceDir'
         global = true
     }
     'Message.resx' {
-        path = ${toolsDir}'/DotNetBuilder/Message.resx.pstmpl'
+        path = ${toolsDir}'/DotNetBuilder/Message.resx.tmpl1'
         outputPath = 'Resource/Message.resx'
         outputBasePath = 'projectDir'
     }

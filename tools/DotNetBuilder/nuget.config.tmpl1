@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <config>
+    <add key="globalPackagesFolder" value="{{ pkgDir | html.xmlattrib }}" />
+  </config>
+  <packageRestore>
+    <add key="enabled" value="True" />
+    <add key="automatic" value="True" />
+  </packageRestore>
+  <packageSources>
+{{~
+  for pkg_name in (package.source | object.keys)
+    if package.source[pkg_name].apiSchema == 'oneget'
+~}}
+    <add key="{{ pkg_name | html.xmlattrib }}" value="{{ package.source[pkg_name].url | html.xmlattrib }}" protocolVersion="{{ package.source[pkg_name].apiVersion | html.xmlattrib }}" />
+{{~
+    end
+  end
+~}}
+  </packageSources>
+  <disabledPackageSources>
+{{~
+  for pkg_name in (package.source | object.keys)
+    if (package.source[pkg_name].apiSchema == 'oneget') && (package.source[pkg_name].disabled == true)
+~}}
+    <add key="{{ pkg_name | html.xmlattrib }}" value="true" />
+{{~
+    end
+  end
+~}}
+  </disabledPackageSources>
+  <apikey>
+{{~
+  for pkg_name in (package.source | object.keys)
+    if (package.source[pkg_name].apiSchema == 'oneget') && (package.source[pkg_name].apikey != empty)
+~}}
+    <add key="{{ pkg_name | html.xmlattrib }}" value="{{ package.source[pkg_name].apikey | html.xmlattrib }}" />
+{{~
+    end
+  end
+~}}
+  </apikey>
+  <packageSourceCredentials>
+{{~
+  for pkg_name in (package.source | object.keys)
+    if (package.source[pkg_name].apiSchema == 'oneget') && (package.source[pkg_name].username != empty)
+~}}
+    <{{ pkg_name | string.replace ' ' '_x0020+' }}>
+      <add key="Username" value="{{ package.source[pkg_name].username | html.xmlattrib }}" />
+      <add key="ClearTextPassword" value="{{ package.source[pkg_name].password | html.xmlattrib }}" />
+    </{{ pkg_name | string.replace ' ' '_x0020+' }}>
+{{~
+    end
+  end
+~}}
+  </packageSourceCredentials>
+</configuration>

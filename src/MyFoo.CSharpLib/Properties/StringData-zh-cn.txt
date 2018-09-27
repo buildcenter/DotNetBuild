@@ -1,0 +1,4 @@
+﻿ResText1 = 世界你好！
+ResText2 = 世界你好2！`n又是一行！
+ResText3 = 世界你好3！
+
