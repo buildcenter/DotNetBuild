@@ -47,7 +47,7 @@ There is no need to work with files like `Properties/AssemblyInfo.cs`, `.resx` o
 
 Building
 ========
-In a CLI environment (such as a CI server), DotNetBuild can compile your build too:
+DotNetBuild is designed to operate from the command line. This is very important when you are building projects in a CI server:
 
 1. Remember to run `build configure` first.
 2. Run `build debug *` to compile all projects in debug configuration, or `build debug [project1] [project2]` to compile selected projects.
@@ -110,6 +110,6 @@ DotNetBuild dependencies live in their own repositories on GitHub:
 
 License
 =======
-Copyright (c) Lizoc Corporation. All rights reserved.
+Copyright (c) Lizoc Inc. All rights reserved.
 
-Licensed under the [MIT](LICENSE) License.
+Licensed under the [MIT](LICENSE) license.

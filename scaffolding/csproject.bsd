@@ -4,15 +4,15 @@ clsCompliant = true
 allowPartialTrust = true
 
 frameworks {
-	net462 {
-		compiler {
-			configuration {
-				Release {
-					strongNameKey = ${strongNameKey.testsign}
-				}
-			}
-		}
-	}
+	#net462 {
+	#	compiler {
+	#		configuration {
+	#			Release {
+	#				strongNameKey = ${strongNameKey.testsign}
+	#			}
+	#		}
+	#	}
+	#}
     'netstandard1.3' {
         dependencies {
             'System.Collections.NonGeneric' {
