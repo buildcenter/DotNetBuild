@@ -3,20 +3,17 @@ year = '2018'
 # ------------------
 # Tooling
 # ------------------
-# .NET Core 2.0.5
-# https://github.com/dotnet/core/blob/master/release-notes/download-archives/2.0.5-download.md
+# .NET Core 2.1.4
+# https://github.com/dotnet/core/blob/master/release-notes/2.1/2.1.4/2.1.4-download.md
 
 # these are win64 binaries
-dotnetSdkUrl = 'https://download.microsoft.com/download/1/1/5/115B762D-2B41-4AF3-9A63-92D9680B9409/dotnet-sdk-2.1.4-win-x64.zip'
-dotnetRuntimeUrl = 'https://download.microsoft.com/download/1/1/0/11046135-4207-40D3-A795-13ECEA741B32/dotnet-runtime-2.0.5-win-x64.zip'
+dotnetSdkUrl = 'https://download.microsoft.com/download/8/A/7/8A765126-50CA-4C6F-890B-19AE47961E4B/dotnet-sdk-2.1.402-win-x64.zip'
+dotnetRuntimeUrl = 'https://download.microsoft.com/download/A/7/8/A78F1D25-8D5C-4411-B544-C7D527296D5E/dotnet-runtime-2.1.4-win-x64.zip'
 
-# use these linux binaries when compiling on linux
-#dotnetSdkUrl = 'https://download.microsoft.com/download/1/1/5/115B762D-2B41-4AF3-9A63-92D9680B9409/dotnet-sdk-2.1.4-linux-x64.tar.gz'
-#dotnetRuntimeUrl = 'https://download.microsoft.com/download/1/1/0/11046135-4207-40D3-A795-13ECEA741B32/dotnet-runtime-2.0.5-linux-x64.tar.gz'
-
-# enable this if you have a custom location for the dotnet sdk
-# the default behavior is to download the sdk into the repo working directory, which will consume 
-# a lot of disk space if you have multiple repos.
+# the default behavior is to download the sdk into the repo working directory, which means it will install a copy of the same sdk
+# in each repo. by specifying a custom location below, all repos will share the same sdk.
+# the sdk archive is about 150mb, which will be downloaded to the repo's temp directory. it then needs to be expanded to the sdk directory below, 
+# consuming about 1.3gb. you can manually delete the sdk archive in the repo's temp directory.
 dotnetSdkDir = ${rootDir}'packages/dotnetsdk'
 
 # ------------------

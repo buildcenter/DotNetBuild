@@ -485,16 +485,9 @@ task Setup -depends Precheck {
     {
         md $BuildEnv.dotnetSdkDir | Out-Null
 
-        $dotnetSdkUrl = $(
-            if ($BuildEnv.dotnetSdkUrl)
-            {
-                $BuildEnv.dotnetSdkUrl
-            }
-            else
-            {
-                'https://download.microsoft.com/download/1/1/5/115B762D-2B41-4AF3-9A63-92D9680B9409/dotnet-sdk-2.1.4-win-x64.zip'
-            }
-        )
+        $dotnetSdkUrl = $BuildEnv.dotnetSdkUrl
+        assert ($dotnetSdkUrl -ne '') ($sr.DotnetSdkUrlUndefined)
+
         $downloadSdkFile = $dotnetSdkUrl.Split('/')[-1]
         $downloadSdkPath = Join-Path $BuildEnv.tempDir -ChildPath $downloadSdkFile
         if (-not (Test-Path $downloadSdkPath -PathType Leaf))
