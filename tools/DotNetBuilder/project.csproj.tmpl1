@@ -91,7 +91,8 @@
 {{-
   vs_integrated_fx = []
   for fx in (frameworks | object.keys)
-    if frameworks[fx].disableVisualStudioIntegration == false
+    if ((frameworks[fx] | object.has_key 'disableVisualStudioIntegration') && (frameworks[fx].disableVisualStudioIntegration == true))
+    else
       vs_integrated_fx = vs_integrated_fx | array.add fx
     end
   end
@@ -457,12 +458,46 @@
 {{-
     end
 -}}
+{{- 
+    if (compiler.configuration[cfg] | object.has_key 'treatWarningsAsErrors') 
+-}}
     {{- level2_sep -}}
     <TreatWarningsAsErrors>{{ compiler.configuration[cfg].treatWarningsAsErrors | string.bool 'true' 'false' }}</TreatWarningsAsErrors>
+{{- 
+    end 
+-}}
+{{- 
+    if (compiler.configuration[cfg] | object.has_key 'preserveCompilationContext') 
+-}}
+    {{- level2_sep -}}
     <PreserveCompilationContext>{{ compiler.configuration[cfg].preserveCompilationContext | string.bool 'true' 'false' }}</PreserveCompilationContext>
+{{- 
+    end 
+-}}
+{{- 
+    if (compiler.configuration[cfg] | object.has_key 'xmlDoc') 
+-}}
+    {{- level2_sep -}}
     <GenerateDocumentationFile>{{ compiler.configuration[cfg].xmlDoc | string.bool 'true' 'false' }}</GenerateDocumentationFile>
+{{- 
+    end 
+-}}
+{{- 
+    if (compiler.configuration[cfg] | object.has_key 'allowUnsafe') 
+-}}
+    {{- level2_sep -}}
     <AllowUnsafeBlocks>{{ compiler.configuration[cfg].allowUnsafe | string.bool 'true' 'false' }}</AllowUnsafeBlocks>
+{{- 
+    end 
+-}}
+{{- 
+    if (compiler.configuration[cfg] | object.has_key 'optimize') 
+-}}
+    {{- level2_sep -}}
     <Optimize>{{ compiler.configuration[cfg].optimize | string.bool 'true' 'false' }}</Optimize>
+{{- 
+    end 
+-}}
   </PropertyGroup>
 {{-
   end
@@ -624,12 +659,46 @@
 {{-
       end
 -}}
+{{-
+      if (frameworks[fx].compiler | object.has_key 'treatWarningsAsErrors')
+-}}
     {{- level2_sep -}}
     <TreatWarningsAsErrors>{{ frameworks[fx].compiler.treatWarningsAsErrors | string.bool 'true' 'false' }}</TreatWarningsAsErrors>
+{{-
+      end
+-}}
+{{-
+      if (frameworks[fx].compiler | object.has_key 'preserveCompilationContext')
+-}}
+    {{- level2_sep -}}
     <PreserveCompilationContext>{{ frameworks[fx].compiler.preserveCompilationContext | string.bool 'true' 'false' }}</PreserveCompilationContext>
+{{-
+      end
+-}}
+{{-
+      if (frameworks[fx].compiler | object.has_key 'xmlDoc')
+-}}
+    {{- level2_sep -}}
     <GenerateDocumentationFile>{{ frameworks[fx].compiler.xmlDoc | string.bool 'true' 'false' }}</GenerateDocumentationFile>
+{{-
+      end
+-}}
+{{-
+      if (frameworks[fx].compiler | object.has_key 'allowUnsafe')
+-}}
+    {{- level2_sep -}}
     <AllowUnsafeBlocks>{{ frameworks[fx].compiler.allowUnsafe | string.bool 'true' 'false' }}</AllowUnsafeBlocks>
+{{-
+      end
+-}}
+{{-
+      if (frameworks[fx].compiler | object.has_key 'optimize')
+-}}
+    {{- level2_sep -}}
     <Optimize>{{ frameworks[fx].compiler.optimize | string.bool 'true' 'false' }}</Optimize>
+{{-
+      end
+-}}
     <!-- legacy compat options -->
 {{-
       if (frameworks[fx].compiler | object.has_key 'noStdLib')
@@ -726,12 +795,46 @@
 {{-
       end
 -}}
+{{-
+      if frameworks[fx].configuration[cfg] | object.has_key 'treatWarningsAsErrors'
+-}}
     {{- level2_sep -}}
     <TreatWarningsAsErrors>{{ frameworks[fx].configuration[cfg].treatWarningsAsErrors | string.bool 'true' 'false' }}</TreatWarningsAsErrors>
+{{-
+      end 
+-}}
+{{-
+      if frameworks[fx].configuration[cfg] | object.has_key 'preserveCompilationContext'
+-}}
+    {{- level2_sep -}}
     <PreserveCompilationContext>{{ frameworks[fx].configuration[cfg].preserveCompilationContext | string.bool 'true' 'false' }}</PreserveCompilationContext>
+{{-
+      end 
+-}}
+{{-
+      if frameworks[fx].configuration[cfg] | object.has_key 'xmlDoc'
+-}}
+    {{- level2_sep -}}
     <GenerateDocumentationFile>{{ frameworks[fx].configuration[cfg].xmlDoc | string.bool 'true' 'false' }}</GenerateDocumentationFile>
+{{-
+      end 
+-}}
+{{-
+      if frameworks[fx].configuration[cfg] | object.has_key 'allowUnsafe'
+-}}
+    {{- level2_sep -}}
     <AllowUnsafeBlocks>{{ frameworks[fx].configuration[cfg].allowUnsafe | string.bool 'true' 'false' }}</AllowUnsafeBlocks>
+{{-
+      end 
+-}}
+{{-
+      if frameworks[fx].configuration[cfg] | object.has_key 'optimize'
+-}}
+    {{- level2_sep -}}
     <Optimize>{{ frameworks[fx].configuration[cfg].optimize | string.bool 'true' 'false' }}</Optimize>
+{{-
+      end 
+-}}
   </PropertyGroup>
 {{-
     end
