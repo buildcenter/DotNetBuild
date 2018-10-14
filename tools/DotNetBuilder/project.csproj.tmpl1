@@ -745,101 +745,101 @@
 {{-
     end
 -}}
-
 {{-
-    for cfg in (frameworks[fx].configuration | object.keys)
+    if (frameworks[fx].compiler != empty) && (frameworks[fx].compiler | object.has_key 'configuration')
+      for cfg in (frameworks[fx].compiler.configuration | object.keys)
 -}}
   {{- level1_sep -}}
   {{- level1_sep -}}
   <!-- Compiler options for {{ fx }} framework in {{ cfg }} configuration -->
   <PropertyGroup Condition="('$(TargetFramework)'=='{{ fx | html.xmlattrib }}') And ('$(Configuration)'=='{{ cfg | html.xmlattrib }}')">
 {{-
-      if frameworks[fx].configuration[cfg].outputType != empty
+        if frameworks[fx].compiler.configuration[cfg].outputType != empty
 -}}
     {{- level2_sep -}}
-    <OutputType>{{ frameworks[fx].configuration[cfg].outputType | html.xmltext }}</OutputType>
+    <OutputType>{{ frameworks[fx].compiler.configuration[cfg].outputType | html.xmltext }}</OutputType>
 {{-
-      end
+        end
 -}}
 {{-
-      if frameworks[fx].configuration[cfg].noWarn != empty
--}}
-    {{- level2_sep -}}
-    <NoWarn>$(NoWarn);{{ frameworks[fx].configuration[cfg].noWarn | array.join ';' | html.xmltext }}</NoWarn>
-{{-
-      end
--}}
-{{-
-      if frameworks[fx].configuration[cfg].constants != empty
+        if frameworks[fx].compiler.configuration[cfg].noWarn != empty
 -}}
     {{- level2_sep -}}
-    <DefineConstants>$(DefineConstants);{{ frameworks[fx].configuration[cfg].constants | array.join ';' | html.xmltext }}</DefineConstants>
+    <NoWarn>$(NoWarn);{{ frameworks[fx].compiler.configuration[cfg].noWarn | array.join ';' | html.xmltext }}</NoWarn>
 {{-
-      end
+        end
 -}}
 {{-
-      if frameworks[fx].configuration[cfg].debugSymbolsType != empty
--}}
-    {{- level2_sep -}}
-    <DebugType>{{ frameworks[fx].configuration[cfg].debugSymbolsType | html.xmltext }}</DebugType>
-{{-
-      end
--}}
-{{-
-      if frameworks[fx].configuration[cfg].strongNameKey != empty
+        if frameworks[fx].compiler.configuration[cfg].constants != empty
 -}}
     {{- level2_sep -}}
-    <AssemblyOriginatorKeyFile>{{ frameworks[fx].configuration[cfg].strongNameKey.path | html.xmltext }}</AssemblyOriginatorKeyFile>
+    <DefineConstants>$(DefineConstants);{{ frameworks[fx].compiler.configuration[cfg].constants | array.join ';' | html.xmltext }}</DefineConstants>
+{{-
+        end
+-}}
+{{-
+        if frameworks[fx].compiler.configuration[cfg].debugSymbolsType != empty
+-}}
+    {{- level2_sep -}}
+    <DebugType>{{ frameworks[fx].compiler.configuration[cfg].debugSymbolsType | html.xmltext }}</DebugType>
+{{-
+        end
+-}}
+{{-
+        if frameworks[fx].compiler.configuration[cfg] | object.has_key 'strongNameKey'
+-}}
+    {{- level2_sep -}}
+    <AssemblyOriginatorKeyFile>{{ frameworks[fx].compiler.configuration[cfg].strongNameKey.path | html.xmltext }}</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
     <PublicSign Condition="'$(OS)' != 'Windows_NT'">true</PublicSign>
 {{-
-      end
+        end
 -}}
 {{-
-      if frameworks[fx].configuration[cfg] | object.has_key 'treatWarningsAsErrors'
--}}
-    {{- level2_sep -}}
-    <TreatWarningsAsErrors>{{ frameworks[fx].configuration[cfg].treatWarningsAsErrors | string.bool 'true' 'false' }}</TreatWarningsAsErrors>
-{{-
-      end 
--}}
-{{-
-      if frameworks[fx].configuration[cfg] | object.has_key 'preserveCompilationContext'
+        if frameworks[fx].compiler.configuration[cfg] | object.has_key 'treatWarningsAsErrors'
 -}}
     {{- level2_sep -}}
-    <PreserveCompilationContext>{{ frameworks[fx].configuration[cfg].preserveCompilationContext | string.bool 'true' 'false' }}</PreserveCompilationContext>
+    <TreatWarningsAsErrors>{{ frameworks[fx].compiler.configuration[cfg].treatWarningsAsErrors | string.bool 'true' 'false' }}</TreatWarningsAsErrors>
 {{-
-      end 
+        end 
 -}}
 {{-
-      if frameworks[fx].configuration[cfg] | object.has_key 'xmlDoc'
--}}
-    {{- level2_sep -}}
-    <GenerateDocumentationFile>{{ frameworks[fx].configuration[cfg].xmlDoc | string.bool 'true' 'false' }}</GenerateDocumentationFile>
-{{-
-      end 
--}}
-{{-
-      if frameworks[fx].configuration[cfg] | object.has_key 'allowUnsafe'
+        if frameworks[fx].compiler.configuration[cfg] | object.has_key 'preserveCompilationContext'
 -}}
     {{- level2_sep -}}
-    <AllowUnsafeBlocks>{{ frameworks[fx].configuration[cfg].allowUnsafe | string.bool 'true' 'false' }}</AllowUnsafeBlocks>
+    <PreserveCompilationContext>{{ frameworks[fx].compiler.configuration[cfg].preserveCompilationContext | string.bool 'true' 'false' }}</PreserveCompilationContext>
 {{-
-      end 
+        end 
 -}}
 {{-
-      if frameworks[fx].configuration[cfg] | object.has_key 'optimize'
+        if frameworks[fx].compiler.configuration[cfg] | object.has_key 'xmlDoc'
 -}}
     {{- level2_sep -}}
-    <Optimize>{{ frameworks[fx].configuration[cfg].optimize | string.bool 'true' 'false' }}</Optimize>
+    <GenerateDocumentationFile>{{ frameworks[fx].compiler.configuration[cfg].xmlDoc | string.bool 'true' 'false' }}</GenerateDocumentationFile>
 {{-
-      end 
+        end 
+-}}
+{{-
+        if frameworks[fx].compiler.configuration[cfg] | object.has_key 'allowUnsafe'
+-}}
+    {{- level2_sep -}}
+    <AllowUnsafeBlocks>{{ frameworks[fx].compiler.configuration[cfg].allowUnsafe | string.bool 'true' 'false' }}</AllowUnsafeBlocks>
+{{-
+        end 
+-}}
+{{-
+        if frameworks[fx].compiler.configuration[cfg] | object.has_key 'optimize'
+-}}
+    {{- level2_sep -}}
+    <Optimize>{{ frameworks[fx].compiler.configuration[cfg].optimize | string.bool 'true' 'false' }}</Optimize>
+{{-
+        end 
 -}}
   </PropertyGroup>
 {{-
+      end
     end
 -}}
-
 {{-
     if frameworks[fx].disableDefaultDependencyPackages == true
 -}}
@@ -851,7 +851,6 @@
 {{-
     end
 -}}
-
   {{- level1_sep -}}
   {{- level1_sep -}}
   <!-- Project dependencies for {{ fx }} framework -->
