@@ -3,14 +3,14 @@ Build Tools for .NET
 DotNetBuild is a build tool designed to simplify how we work with .NET family projects.
 
 ```batchfile
-C:\> md repo && cd repo
-C:\repo\> powershell -Command "& { wget https://raw.githubusercontent.com/buildcenter/DotNetBuild/master/scaffold.ps1 -UseBasicParsing | iex }"
-C:\repo\> build configure
-C:\repo\> build debug *
-C:\repo\> build clean debug *
-C:\repo\> build release *
-C:\repo\> echo my-secret-apikey > .\credentials\nuget.org.repokey
-C:\repo\> build publish .\releases\my.very.cool.lib.1.0.0.nupkg
+C:\> md coolstuff && cd coolstuff
+C:\coolstuff\> powershell -Command "& { wget https://raw.githubusercontent.com/buildcenter/DotNetBuild/master/scaffold.ps1 -UseBasicParsing | iex }"
+C:\coolstuff\> build configure
+C:\coolstuff\> build debug *
+C:\coolstuff\> build clean debug *
+C:\coolstuff\> build release *
+C:\coolstuff\> echo my-secret-apikey > .\credentials\nuget.org.repokey
+C:\coolstuff\> build publish .\releases\coolstuff.1.0.0.nupkg
 ```
 
 Congrats! You have just built your assembly and published it as a package on NuGet.org. Say what?
