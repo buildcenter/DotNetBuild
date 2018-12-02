@@ -59,7 +59,7 @@ CriticalFileNotFound = Unable to continue because a required file was not found:
 BadConfigSchema = The effective configuration file does not conform to the requisite schema. The defective object path is "{0}".
 Goodbye = My work here is done. Goodbye!
 CreatingGlobalJson = [i] Creating global.json
-ProcessingGlobalTemplate = [i] Processing global template: {0}
+ProcessingGlobalTemplate = [i] Processing global templates
 CreatingSolutionFile = [i] Creating solution file
 NothingToBuild = [!] There is nothing to build!
 ProjectFileNotFound = Unable to build a project because its project file was missing: {0}
@@ -67,9 +67,13 @@ TestProjectFileNotFound = Unable to build a project because its test project fil
 ProjectIncludeFileNotFound = Unable to build a project because an include file was missing: {0}
 TemplateInfoNotFound = Unable to build a project because a required template was undefined: {0}
 TemplatePathNotSpecified = A template definition did not specify a required property: path
-ProcessingTemplate = Processing template {0} -> {1}
-ProcessingTemplateWildcard = Processing template wildcard (recurse = {1}): {0}
+ProcessingTemplates = [i] Generating additional code in project '{0}' using text templates
+GenerateFromTemplate = --> gen {1} <- {0}
+ProcessingTemplateWildcard = --> wildcard search for {0} (recurse = {1})
 TemplateOutputPathAlreadyUsed = Unable to build a project because the output path for a template is unavailable: {0}
+EnforceCopyrightHeader = [i] Enforce copyright header to {0}/{1}
+AddCopyrightHeader = --> add {0}
+ModifyCopyrightHeader = --> mod {0}
 NoTestProject = [!] The project "{0}" does not have an accompanying unit test project.
 CreatingPackage = Creating package...
 NothingToClean = There is no project to clean.
@@ -77,12 +81,16 @@ CleaningProject = Cleaning project output: {0}
 BuildingForConfiguration = Building project "{0}" under "{1}" configuration...
 TestingForConfiguration = Running unit test for project "{0}" under "{1}" configuration...
 SpecifyPathToNupkgFile = You need to specify the full path of .nupkg file(s) to publish.
+NupkgFileNotFound = [!] Unable to publish to server because the package file is missing: {0}
 PublishingCredFileNotFound = [!] Unable to publish to server because the credential file "{1}" is missing: {0}
 PublishingCredMissing = [!] Unable to publish to server because the credential file "{1}" does not contain any credential information: {0}
 PushingPackage = Pushing package: {0}
 SymbolsPackageNotFound = [!] Symbols package not found!
 PublishPackageWithSymbols = Target server with symbols: {0}
 PublishPackageWithoutSymbols = Target server (symbols disabled): {0}
+IncludePathIsNull = Failed to process an include directive because the path is null or an empty string.
+IncludePathContainsPathSeparator = An include directive in BSD cannot contain path separator character.
+IncludeNameNotFound = An include directive for "{0}" was not found.
 
 # ---- [ /Localized Data ] --------------------------------------------
 '@

@@ -1,9 +1,14 @@
-#include cslib,net462,netstandard1_3
+include 'cslib'
+include 'net462'
+include 'netstandard1_3'
+
 assemblyDescription = 'A sample project that demonstrates compiling C# library assemblies.'
 clsCompliant = true
 allowPartialTrust = true
 
 frameworks {
+	# You need to create a '.snk' file in order to strongly sign your library.
+	# Look at 'src/global.bsd' file (under 'Security' section) to configure.
 	#net462 {
 	#	compiler {
 	#		configuration {
@@ -26,7 +31,10 @@ frameworks {
 internalsVisibleTo {
 	'MyFoo.CSharpLib.Tests' {
 		'DEBUG' = null
+		
+		# Again this needs strong name key to work
 		#'!DEBUG,NETFX' = 'PublicKey='${frameworks.net462.compiler.configuration.Release.strongNameKey.hash}
+
 		'!DEBUG,NETFX' = null
 		'!DEBUG,!NETFX' = null
 	}

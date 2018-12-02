@@ -1,4 +1,9 @@
-#include cslib,net462,xunit,xunit-net462,xunit-netcoreapp2
+include 'cslib'
+include 'net462'
+include 'xunit'
+include 'xunit-net462'
+include 'xunit-netcoreapp2'
+
 clsCompliant = false
 allowPartialTrust = false
 dependencies {

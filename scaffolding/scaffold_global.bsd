@@ -1,5 +1,21 @@
 year = '2018'
 
+# Your project dependencies are delivered as NuGet packages.
+# .NETBuilder defaults to download these packages to your repo's working directory. The design ensures 
+# that all changes are made inside the repo's directory, and .NETBuild does not touch anything else on your 
+# system. 
+# However, the downside is that this can quickly eat a lot of disk space when you have multiple repos, because 
+# when two different repos have the same dependency package, that package will be downloaded twice to each repo's working 
+# directory.
+# You can override overcome this by explicitly setting where NuGet packages should be saved on your system. The setting below 
+# will save packages to 'packages/oneget' under the repo's drive root (e.g. 'E:\packages\oneget')
+#pkgDir = ${rootDir}'packages/oneget'
+
+# Credential files are used to publish your build to NuGet repositories. Its contents are set to be ignored by the '.gitignore'
+# file, so you don't accidentally expose your credentials.
+# The credential directory path lives in the repo's 'credential' folder by default. You can set it explicitly here.
+#credDir = ${rootDir}'Credentials/lizoc'
+
 # ------------------
 # Tooling
 # ------------------
@@ -10,11 +26,14 @@ year = '2018'
 dotnetSdkUrl = 'https://download.microsoft.com/download/8/A/7/8A765126-50CA-4C6F-890B-19AE47961E4B/dotnet-sdk-2.1.402-win-x64.zip'
 dotnetRuntimeUrl = 'https://download.microsoft.com/download/A/7/8/A78F1D25-8D5C-4411-B544-C7D527296D5E/dotnet-runtime-2.1.4-win-x64.zip'
 
-# the default behavior is to download the sdk into the repo working directory, which means it will install a copy of the same sdk
-# in each repo. by specifying a custom location below, all repos will share the same sdk.
-# the sdk archive is about 150mb, which will be downloaded to the repo's temp directory. it then needs to be expanded to the sdk directory below, 
-# consuming about 1.3gb. you can manually delete the sdk archive in the repo's temp directory.
-#dotnetSdkDir = ${rootDir}'packages/dotnetsdk'
+# The .NETCore SDK is needed to build your code.
+# Similarly to how .NETBuilder manages your NuGet packages, the default behavior is to download the sdk into the repo working directory, 
+# which means it will install a copy of the same SDK in each repo that is on your local system. By specifying a custom location below, 
+# all repos will share the same SDK.
+# The SDK archive is about 150mb, which will be downloaded to the repo's temp directory. it then needs to be expanded to the sdk directory below, 
+# consuming about 1.3gb. 
+# You can safely delete the SDK archive manually in the repo's temp directory. It won't be downloaded again unless it cannot find the directory below.
+dotnetSdkDir = ${rootDir}'packages/dotnetsdk'
 
 # ------------------
 # Git and CI
@@ -53,10 +72,38 @@ company = '{{ $userName }}'
 product = '{{ $repoFullName }}'
 authors = [ '{{ $userName }}' ]
 trademark = '{{ $userName }}'
+# required by copyright header
+website = ${docServerUrl}
+license = 'MIT'
+# The copyright header is applied to all files matching the wildcards under each project's directory in the working folder.
+copyrightHeader {
+    'Source/*.cs' {
+        # header must appear at beginning of file => ^
+        # first line: `//`, optional whitespaces, then repeating `-` => (//)(\s)*(-)+
+        # newline: `\r\n` or `\n` => ((\r){0,1}(\n))
+        # second line: `//`, optional whitespaces, `<copyright`, any chars except line break, then `>` => (//)(\s)*(<copyright)(.)*(>)
+        # second line continue: any chars and line breaks => (.|\n)*
+        # second last line: `//`, optional whitespaces, `</copyright>`, then newline => (//)(\s)*(</copyright>)((\r){0,1}(\n))
+        # last line: `//`, optional whitespaces, then repeating `-`, then repeating whitespace and newlines => (//)(\s)*(-)+(\s|\n)*
+        find = '^(//)(\\s)*(-)+((\\r){0,1}(\\n))(//)(\\s)*(<copyright)(.)*(>)(.|\\n)*(//)(\\s)*(</copyright>)((\\r){0,1}(\\n))(//)(\\s)*(-)+(\\s|\\n)*'
+        replace = '''// -----------------------------------------------------------------------
+// <copyright file="${filename}" repo="'''${repoFullName}'''">
+//     Copyright (C) '''${year}''' '''${company}''' <'''${website}'''>
+//     The source code in this file is subject to the '''${license}''' license.
+//     See the LICENSE file in the repository root directory for more information.
+// </copyright>
+// -----------------------------------------------------------------------
+
+'''
+        recurse = true
+    }
+}
 
 # ------------------
 # Security
 # ------------------
+# Strongly signed assemblies is mainly for the full .NET framework. 
+# You need to generate a '.snk' file using the .NET tools, and place it under the path below.
 #strongNameKey {
 #    testsign {
 #        path = ${credDir}'/testsign.snk'
@@ -116,7 +163,6 @@ package {
 # ------------------
 # Global templates
 # ------------------
-#templateHelperScriptFile = ${toolsDir}'/template_helpers.ps1'
 templates {
     'nuget.config' {
         path = ${toolsDir}'/DotNetBuilder/nuget.config.tmpl1'

@@ -165,7 +165,7 @@ templates {
     outputPath = ${projectName}'.csproj'
     outputBasePath = 'projectDir'
   }
-  'Source/**/.tmpl1' {
+  'Source/**/*.tmpl1' {
     path = ${projectDir}'/Source/*.tmpl1'
     recurse = true
   }
@@ -184,7 +184,7 @@ files {
   'project.csproj' {
     type = 'template'
   }
-  'Source/**/.tmpl1' {
+  'Source/**/*.tmpl1' {
     type = 'template'
   }
   'Properties/**/*.cs' {

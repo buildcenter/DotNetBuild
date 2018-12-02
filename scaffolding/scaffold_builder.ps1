@@ -3,6 +3,7 @@ $payloadDir = Join-Path $repoDir -ChildPath 'temp/payload'
 $payloadZip = Join-Path $repoDir -ChildPath 'temp/payload.zip'
 $scaffoldTemplate = Join-Path $PSScriptRoot -ChildPath 'scaffold_template.ps1'
 $scaffoldOutput = Join-Path $repoDir -ChildPath 'temp/scaffold.ps1'
+
 $scaffoldGlobalBsd = Join-Path $PSScriptRoot -ChildPath 'scaffold_global.bsd'
 $scaffoldCsprojectBsd = Join-Path $PSScriptRoot -ChildPath 'csproject.bsd'
 

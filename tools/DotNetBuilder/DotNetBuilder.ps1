@@ -212,8 +212,7 @@ task Setup -depends Precheck {
     # ~~~~~~~~~~~~~~~~~
     say ($sr.ImportingModules)
     @(
-        'PSJapson/Lizoc.PowerShell.Japson.dll'
-        #'PSTemplate.psm1'
+        'JsonPlus/JsonPlus.psd1'
         'TextScript/Lizoc.PowerShell.TextScript.dll'
         'Robocopy.psm1'
     ) | ForEach-Object {
@@ -289,15 +288,16 @@ task Setup -depends Precheck {
     }
 
     # parse round 1
-    $defaultConfig = ConvertFrom-Japson ($defaultBsd -join [Environment]::NewLine)
+    $defaultConfig = ConvertFrom-JsonPlus ($defaultBsd -join [Environment]::NewLine)
 
     # if global config file found, parse round 2
     $globalBsd = $defaultBsd
     if (Test-Path $defaultConfig.globalConfigFile -PathType Leaf)
     {
         say $sr.ImportingGlobalConfig
-        $globalBsd += Get-Content $defaultConfig.globalConfigFile -Encoding UTF8
-        $globalConfig = ConvertFrom-Japson ($globalBsd -join [Environment]::NewLine)
+        $globalBsd += (Get-Content $defaultConfig.globalConfigFile -Encoding UTF8)
+
+        $globalConfig = ConvertFrom-JsonPlus ($globalBsd -join [Environment]::NewLine)
     }
     else
     {
@@ -320,20 +320,11 @@ task Setup -depends Precheck {
 
     $BuildEnv.globalConfigText = $globalBsd
 
-
     # ~~~~~~~~~~~~~~~~~
     # check prerequisite files
     # ~~~~~~~~~~~~~~~~~
     if ($Subcommand -eq 'Configure')
     {
-        <#
-	    if (-not $BuildEnv.templateHelperScriptFile)
-	    {
-	        $BuildEnv.templateHelperScriptFile = Join-Path $BuildEnv.toolsDir -ChildPath 'template_helpers.ps1'
-	    }
-	    assert (Test-Path $BuildEnv.templateHelperScriptFile -PathType Leaf) ($sr.CriticalFileNotFound -f $BuildEnv.templateHelperScriptFile)
-        #>
-
 	    if ($BuildEnv.templates)
 	    {
 	        $BuildEnv.templates | Get-Member -MemberType NoteProperty | select -expand Name | ForEach-Object {
@@ -602,6 +593,8 @@ task Configure -depends Discover -precondition { $Subcommand -eq 'Configure' } {
         return
     }
 
+    $repoBasePath = [System.IO.Path]::GetFullPath($BuildEnv.repoDir)
+
     # -----------
     # working\source\global.json
     # -----------
@@ -613,13 +606,25 @@ task Configure -depends Discover -precondition { $Subcommand -eq 'Configure' } {
     # global level templates
     # -----------
     # we need to regen the templates every time we reconfigure, because (1) template may have changed, or (2) BuildEnv may have changed
+    say ($sr.ProcessingGlobalTemplate)
     $BuildEnv.templates | Get-Member -MemberType NoteProperty | select -expand Name | ForEach-Object {
         if ($BuildEnv.templates."$_".global -eq $true)
         {
             $globalTmplPath = $BuildEnv.templates."$_".path
             $globalTmplOutputPath = Join-Path $BuildEnv."$($BuildEnv.templates."$_".outputBasePath)" -ChildPath $BuildEnv.templates."$_".outputPath
 
-            say ($sr.ProcessingGlobalTemplate -f $globalTmplPath)
+            $globalTmplPath = [System.IO.Path]::GetFullPath($globalTmplPath)
+            $globalTmplOutputPath = [System.IO.Path]::GetFullPath($globalTmplOutputPath)
+
+            $globalTmplSubPath = $(
+                if ($globalTmplPath.StartsWith($repoBasePath)) { $globalTmplPath.Substring($repoBasePath.Length) }
+                else { $globalTmplPath }
+            )
+            $globalTmplOutputSubPath = $(
+                if ($globalTmplOutputPath.StartsWith($repoBasePath)) { $globalTmplOutputPath.Substring($repoBasePath.Length) }
+                else { $globalTmplOutputPath }
+            )
+            say ($sr.GenerateFromTemplate -f $globalTmplSubPath, $globalTmplOutputSubPath)
 
             $convertFromTemplateParams = @{
                 InputObject = $BuildEnv
@@ -658,6 +663,7 @@ task Configure -depends Discover -precondition { $Subcommand -eq 'Configure' } {
     for ($i = 0; $i -lt $allBuildTargets.Count; $i++)
     {
         $projectDir = Join-Path $BuildEnv.workingSourceDir -ChildPath $allBuildTargets[$i]
+        $projectName = $allBuildTargets[$i]
 
         $projectEffectiveBsd = @()
 
@@ -685,45 +691,51 @@ task Configure -depends Discover -precondition { $Subcommand -eq 'Configure' } {
         # bsd includes
         $projectInfoPath = Join-Path $projectDir -ChildPath 'project.bsd'
         $projectInfoContent = Get-Content -Path $projectInfoPath -Encoding UTF8
-        if ($projectInfoContent[0] -notlike '#include *')
-        {
-            $projectEffectiveBsd += ($projectInfoContent -join [Environment]::NewLine)
-        }
-        else
-        {
-            $includeBsdFiles = $projectInfoContent[0].Substring('#include '.Length).Split(',')
-            $includeBsdFiles | where { 
-                ($_ -ne $null) -and 
-                ($_ -ne '') -and 
-                ($_.Trim() -ne '') 
-            } | ForEach-Object {
-                $bsdFileName = $_.Trim() + '.bsd'
-                $bsdDiscoverySuccess = $false
-                foreach ($inclDir in $BuildEnv.includeDiscoveryDir)
-                {
-                    $bsdFilePath = Join-Path $inclDir -ChildPath $bsdFileName
-                    if (Test-Path $bsdFilePath -PathType Leaf)
-                    {
-                        $projectEffectiveBsd += ((Get-Content -Path $bsdFilePath -Encoding UTF8) -join [Environment]::NewLine)
-                        $bsdDiscoverySuccess = $true
-                        break
-                    }
-                }
-
-                assert $bsdDiscoverySuccess ($sr.ProjectIncludeFileNotFound -f $bsdFileName)
-            }
-
-            $projectEffectiveBsd += ($projectInfoContent[1..($projectInfoContent.Count - 1)] -join [Environment]::NewLine)
-        }
+        $projectEffectiveBsd += ($projectInfoContent -join [Environment]::NewLine)
 
         # eval effective bsd
-        $projectConfig = ConvertFrom-Japson ($projectEffectiveBsd -join [Environment]::NewLine)
+        $projectConfig = ConvertFrom-JsonPlus ($projectEffectiveBsd -join [Environment]::NewLine) -Include {
+            $inclName = $args[0]
+
+            if ($inclName -eq $null) 
+            { 
+                throw $sr.IncludePathIsNull
+            }
+            
+            if ($inclName.Contains('/') -or $inclName.Contains('\'))
+            {
+                throw $sr.IncludePathContainsPathSeparator
+            }
+
+            $inclExists = $false
+            foreach ($inclDir in $BuildEnv.includeDiscoveryDir)
+            {
+                $inclFilePath = Join-Path $inclDir -ChildPath ($inclName + '.bsd')
+                if (Test-Path $inclFilePath -PathType Leaf)
+                {
+                    $inclExists = $true
+                    Get-Content $inclFilePath -Raw
+                    break
+                }
+            }
+
+            if ($inclExists -eq $false)
+            {
+                throw ($sr.IncludeNameNotFound -f $inclName)
+            }
+        }
+
         $projectConfigHashtable = @{}
         $projectConfig | Get-Member -MemberType NoteProperty | select -expand Name | ForEach-Object {
             $projectConfigHashtable."$_" = $projectConfig."$_"
         }
 
+        # used for beautifying messages
+        $projectBasePath = $projectConfig.projectDir.Substring(0, $projectConfig.projectDir.Length - $projectConfig.projectDir.Split('/').Split('\')[-1].Length)
+        $projectBasePath = [System.IO.Path]::GetFullPath($projectBasePath)
+        
         # process all templates
+        say ($sr.ProcessingTemplates -f $projectName)
         $projectConfig.files | Get-Member -MemberType NoteProperty | select -expand Name | ForEach-Object {
             if ($projectConfig.files."$_".type -eq 'template')
             {
@@ -742,7 +754,10 @@ task Configure -depends Discover -precondition { $Subcommand -eq 'Configure' } {
 
                         assert (-not (Test-Path $tmplOutputPath -PathType Container)) ($sr.TemplateOutputPathAlreadyUsed -f $tmplOutputPath)
 
-                        say ($sr.ProcessingTemplate -f $tmplPath, (Split-Path $tmplOutputPath -Leaf))
+                        $tmplSubPath = $tmplPath.Substring($projectBasePath.Length)
+                        $tmplOutputSubPath = $tmplOutputPath.Substring($projectBasePath.Length)
+
+                        say ($sr.GenerateFromTemplate -f $tmplSubPath, $tmplOutputSubPath)
                         $convertFromTemplateParams = @{
                             InputObject = $projectConfigHashtable
                             Template = ((Get-Content -Path $tmplPath -Encoding UTF8) -join [Environment]::NewLine)
@@ -753,7 +768,11 @@ task Configure -depends Discover -precondition { $Subcommand -eq 'Configure' } {
                 else
                 {
                     $tmplOutputPath = Join-Path $projectConfig."$($tmplInfo.outputBasePath)" -ChildPath $tmplInfo.outputPath
+                    $tmplOutputPath = [System.IO.Path]::GetFullPath($tmplOutputPath)
                     $tmplOutputPathParent = Split-Path $tmplOutputPath -Parent
+                    $tmplOutputSubPath = $tmplOutputPath.Substring($projectBasePath.Length)
+
+                    $tmplSubPath = [System.IO.Path]::GetFullPath($tmplInfo.path).Substring($repoBasePath.Length)
 
                     assert (-not (Test-Path $tmplOutputPath -PathType Container)) ($sr.TemplateOutputPathAlreadyUsed -f $tmplOutputPath)
 
@@ -766,7 +785,7 @@ task Configure -depends Discover -precondition { $Subcommand -eq 'Configure' } {
                         die ($sr.TemplateOutputPathAlreadyUsed -f $tmplOutputPathParent)
                     }
 
-                    say ($sr.ProcessingTemplate -f $tmplInfo.path, $tmplOutputPath)
+                    say ($sr.GenerateFromTemplate -f $tmplSubPath, $tmplOutputSubPath)
                     $convertFromTemplateParams = @{
                         InputObject = $projectConfigHashtable
                         Template = ((Get-Content -Path $tmplInfo.path -Encoding UTF8) -join [Environment]::NewLine)
@@ -776,8 +795,41 @@ task Configure -depends Discover -precondition { $Subcommand -eq 'Configure' } {
             }
         }
 
-        #die "so far so good!"
-        
+        #add copyright headers
+        if ($projectConfig.copyrightHeader -is [psobject])
+        {
+            $projectConfig.copyrightHeader | Get-Member -MemberType NoteProperty | select -expand Name | ForEach-Object {
+                $fileSelectWildcard = $_
+                $fileSelectRecurse = $projectConfig.copyrightHeader."$_".recurse
+                $copyrightHeaderRegex = $projectConfig.copyrightHeader."$_".find 
+                $copyrightHeaderTmpl = $projectConfig.copyrightHeader."$_".replace
+                $fileSelectPath = Join-Path $projectConfig.projectDir -ChildPath $fileSelectWildcard
+
+                say ($sr.EnforceCopyrightHeader -f $projectName, $fileSelectWildcard)
+
+                $fileSelect = dir $fileSelectPath -Recurse:$fileSelectRecurse -File
+                foreach ($fileInfo in $fileSelect)
+                {
+                    $fileSubPath = $fileInfo.FullName.Substring($projectBasePath.Length)
+
+                    $fileContent = Get-Content -Path $fileInfo.FullName -Raw
+                    $copyrightHeader = $copyrightHeaderTmpl.Replace('${filename}', $fileInfo.Name)
+                    if ($fileContent -notmatch $copyrightHeaderRegex)
+                    {
+                        say ($sr.AddCopyrightHeader -f $fileSubPath)
+                        $fileNewContent = $copyrightHeader + $fileContent
+                        $fileNewContent | Set-Content -Path $fileInfo.FullName -NoNewline -Encoding UTF8
+                    }
+                    elseif (-not $fileContent.StartsWith($copyrightHeader)) 
+                    {
+                        say ($sr.ModifyCopyrightHeader -f $fileSubPath)
+                        $fileNewContent = $fileContent -replace $copyrightHeaderRegex, $copyrightHeader
+                        $fileNewContent | Set-Content -Path $fileInfo.FullName -NoNewline -Encoding UTF8
+                    }
+                }
+            }
+        }
+
         # make file
         $projectMakeFilePath = Join-Path $projectConfig.projectDir -ChildPath ($projectConfig.projectName + $projectConfig.compiler.makeFileExtension)
         $allMakeFiles += Resolve-Path $projectMakeFilePath | select -expand Path
@@ -797,8 +849,7 @@ task Configure -depends Discover -precondition { $Subcommand -eq 'Configure' } {
 }
 
 task Build -depends Discover -precondition { $Subcommand -eq 'Build' } {
-    # todo
-    # [ ] dotnet publish
+    # #todo
     # [ ] aot
 
     $sr = $BuildEnv.BMLocalizedData
@@ -943,7 +994,7 @@ task Publish -depends Setup -precondition { $Subcommand -eq 'Publish' } {
             $pkgLiteralPath = Join-Path $BuildEnv.repoDir -ChildPath $pkgLiteralPath
         }
         
-        assert (Test-Path $pkgLiteralPath -PathType Leaf) ("Package file not found: {0}" -f $pkgLiteralPath)
+        assert (Test-Path $pkgLiteralPath -PathType Leaf) ($sr.NupkgFileNotFound -f $pkgLiteralPath)
         $pkgLiteralPath = Resolve-Path $pkgLiteralPath | select -expand Path
 
         $pkgList += $pkgLiteralPath
