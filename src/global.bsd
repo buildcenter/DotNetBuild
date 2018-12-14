@@ -19,12 +19,12 @@ pkgDir = ${rootDir}'packages/oneget'
 # ------------------
 # Tooling
 # ------------------
-# .NET Core 2.1.4
-# https://github.com/dotnet/core/blob/master/release-notes/2.1/2.1.4/2.1.4-download.md
+# .NET Core 2.2.0
+# https://github.com/dotnet/core/blob/master/release-notes/2.2/2.2.0/2.2.0-download.md
 
-# these are win64 binaries
-dotnetSdkUrl = 'https://download.microsoft.com/download/8/A/7/8A765126-50CA-4C6F-890B-19AE47961E4B/dotnet-sdk-2.1.402-win-x64.zip'
-dotnetRuntimeUrl = 'https://download.microsoft.com/download/A/7/8/A78F1D25-8D5C-4411-B544-C7D527296D5E/dotnet-runtime-2.1.4-win-x64.zip'
+# SDK binaries for Windows x64. Change to match your OS, which you can find from the URL above.
+dotnetSdkUrl = 'https://download.visualstudio.microsoft.com/download/pr/02a78e5a-3e7b-4d7e-a730-b46c9f551346/6dae57a34f649095d745acedb773d75f/dotnet-sdk-2.2.100-win-x64.zip'
+dotnetRuntimeUrl = 'https://download.visualstudio.microsoft.com/download/pr/62711024-fa98-4919-9fe0-466744b20941/4cdef0431350a441b45e11784f657b09/dotnet-runtime-2.2.0-win-x64.zip'
 
 # The .NETCore SDK is needed to build your code.
 # Similarly to how .NETBuilder manages your NuGet packages, the default behavior is to download the sdk into the repo working directory, 
